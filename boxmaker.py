@@ -184,6 +184,9 @@ class Box():
     def _draw_line(self, fromX,fromY,toX,toY):
         self._doc.line(fromX*mm,fromY*mm,toX*mm,toY*mm)
 
+    def _draw_circle(self, X, Y, radius):
+        self._doc.circle(X*mm, Y*mm, radius*mm)
+
     def _closest_odd(self, number):
         '''
         Find and return the closest odd number to the one passed in
