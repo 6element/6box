@@ -1,5 +1,10 @@
 import boxmaker
 
+from reportlab.lib.colors import black
+from reportlab.lib.colors import red
+from reportlab.lib.colors import blue
+from reportlab.lib.colors import green
+
 BOX_LENGTH = 230
 BOX_WIDTH = 135
 BOX_HEIGHT = 30
@@ -28,18 +33,21 @@ box = boxmaker.Box(BOX_LENGTH, BOX_HEIGHT, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WI
 box._compute_dimensions()
 
 
-# render the top part
+################# render the top part
 box._initialize_document("top.pdf", PLATE_WIDTH, PLATE_HEIGHT)
 marginx = 5
 marginy = 5
+box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, marginy)
 # draw the screen
+box._doc.setStrokeColor(green)
 box._draw_line(marginx + SCREEN_POSITION_X, marginy + SCREEN_POSITION_Y, marginx + SCREEN_POSITION_X + SCREEN_WIDTH, marginy + SCREEN_POSITION_Y)
 box._draw_line(marginx + SCREEN_POSITION_X, marginy + SCREEN_POSITION_Y + SCREEN_HEIGHT, marginx + SCREEN_POSITION_X + SCREEN_WIDTH, marginy + SCREEN_POSITION_Y + SCREEN_HEIGHT)
 box._draw_line(marginx + SCREEN_POSITION_X, marginy + SCREEN_POSITION_Y, marginx + SCREEN_POSITION_X, marginy + SCREEN_POSITION_Y + SCREEN_HEIGHT)
 box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_WIDTH, marginy + SCREEN_POSITION_Y, marginx + SCREEN_POSITION_X + SCREEN_WIDTH, marginy + SCREEN_POSITION_Y + SCREEN_HEIGHT)
 
 #draw to metal part
+box._doc.setStrokeColor(red)
 box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_TO_METALX1, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY1, marginx + SCREEN_POSITION_X  + SCREEN_TO_METALX2, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY1)
 box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_TO_METALX1, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY2, marginx + SCREEN_POSITION_X  + SCREEN_TO_METALX2, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY2)
 box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_TO_METALX1, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY1, marginx + SCREEN_POSITION_X + SCREEN_TO_METALX1, marginy + SCREEN_POSITION_Y + SCREEN_TO_METALY2)
@@ -47,10 +55,12 @@ box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_TO_METALX2, marginy + SCREEN
 
 box._doc.save()
 
-# render the bottom part
+################## render the bottom part
 box._initialize_document("bottom.pdf", PLATE_WIDTH, PLATE_HEIGHT)
+box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(5, 5)
 # screws
+box._doc.setStrokeColor(red)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y,  1)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y,  1)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y,  1)
@@ -58,8 +68,9 @@ box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCRE
 
 box._doc.save()
 
-# render the sides parts
+################# render the sides parts
 box._initialize_document("sides.pdf", PLATE_WIDTH, PLATE_HEIGHT)
+box._doc.setStrokeColor(blue)
 box._draw_width_by_height_side(5, 5)
 box._draw_width_by_height_side(5, 5 + box._size['h'] + 5)
 box._draw_depth_by_height_side(5, (5 + box._size['h'])*2 + 5)

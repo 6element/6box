@@ -1,7 +1,7 @@
 import logging, time
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-from reportlab.lib.colors import black
+
 
 class Box():
     '''
@@ -129,7 +129,6 @@ class Box():
         # initialize the pdf file (based on layout of pieces)
         self._doc = canvas.Canvas(filename, width, height)
         self._doc.setPageSize( [width*mm, height*mm] )
-        self._doc.setStrokeColor(black)
         self._doc.setLineWidth(0.1)
 
     def _draw_horizontal_line(self, x0,y0,notch_width,notch_count,notch_height,cut_width,flip,smallside):
