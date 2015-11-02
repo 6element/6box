@@ -7,10 +7,10 @@ from reportlab.lib.colors import green
 
 BOX_LENGTH = 230
 BOX_WIDTH = 135
-BOX_HEIGHT = 30
+BOX_INNER_HEIGHT = 30
 
 MATERIAL_THICKNESS = 7.1
-CUT_WIDTH = 0
+CUT_WIDTH = 0.01
 
 PLATE_WIDTH = 240
 PLATE_HEIGHT = 145
@@ -23,13 +23,14 @@ SCREEN_TO_SCREW1X = 36
 SCREEN_TO_SCREW2X = 162
 SCREEN_TO_SCREW1Y = 22
 SCREEN_TO_SCREW2Y = 87.5
+RADIUS = 1.5
 
 SCREEN_TO_METALX1 = 14
 SCREEN_TO_METALX2 = 184
 SCREEN_TO_METALY1 = 6
-SCREEN_TO_METALY2 = 107
+SCREEN_TO_METALY2 = 108
 
-box = boxmaker.Box(BOX_LENGTH, BOX_HEIGHT, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
+box = boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
 box._compute_dimensions()
 
 
@@ -61,10 +62,10 @@ box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(5, 5)
 # screws
 box._doc.setStrokeColor(red)
-box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y,  1)
-box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y,  1)
-box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y,  1)
-box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y,  1)
+box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y, RADIUS)
+box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, marginy + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y, RADIUS)
 
 box._doc.save()
 
@@ -74,6 +75,6 @@ box._doc.setStrokeColor(blue)
 box._draw_width_by_height_side(5, 5)
 box._draw_width_by_height_side(5, 5 + box._size['h'] + 5)
 box._draw_depth_by_height_side(5, (5 + box._size['h'])*2 + 5)
-box._draw_depth_by_height_side(5, (5 + box._size['h'])*3 + 5)
+# box._draw_depth_by_height_side(5, (5 + box._size['h'])*3 + 5)
 box._doc.save()
 
