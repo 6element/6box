@@ -48,7 +48,7 @@ class Box():
         self._draw_depth_by_height_side(self._size['d'] + self._size['w'] + self._margin*3.0,self._size['h'] + self._margin*2.0)
         # 5. a W x H side (the front)
         self._draw_width_by_height_side(self._size['d'] + self._margin*2.0, self._size['h'] + self._size['d'] + self._margin*3.0)        
-        6. a W X D side (the top)
+        # 6. a W X D side (the top)
         self._draw_width_by_depth_side(self._size['d'] + self._margin*2.0, self._size['h']*2.0 + self._size['d'] + self._margin*4.0)
         # and write out the PDF
         self._doc.save()
@@ -60,12 +60,12 @@ class Box():
         self._draw_horizontal_line(x0, y0+self._size['d']-self._thickness,
             self._notch_length['w'],self._num_notches['w'],
             self._thickness, -1*self._cut_width/2.0, False, True)
-        self._draw_vertical_line(x0,y0,
-            self._notch_length['d'], self._num_notches['d'],
-            self._thickness, -1*self._cut_width/2.0,True,True)
-        self._draw_vertical_line(x0+self._size['w']-self._thickness, y0,
-            self._notch_length['d'],self._num_notches['d'],
-            self._thickness, -1*self._cut_width/2.0,False,True)
+        # self._draw_vertical_line(x0,y0,
+        #     self._notch_length['d'], self._num_notches['d'],
+        #     self._thickness, -1*self._cut_width/2.0,True,True)
+        # self._draw_vertical_line(x0+self._size['w']-self._thickness, y0,
+        #     self._notch_length['d'],self._num_notches['d'],
+        #     self._thickness, -1*self._cut_width/2.0,False,True)
 
     def _draw_depth_by_height_side(self,x0,y0):
         self._draw_horizontal_line(x0,y0,
