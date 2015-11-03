@@ -6,6 +6,8 @@ from reportlab.lib.colors import red
 from reportlab.lib.colors import blue
 from reportlab.lib.colors import green
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 
 PLATE_LENGTH = 1530
 PLATE_WIDTH = 1000
@@ -13,7 +15,7 @@ MATERIAL_THICKNESS = 5
 
 BOX_LENGTH = 270
 BOX_WIDTH = 140
-BOX_INNER_HEIGHT = 30
+BOX_INNER_HEIGHT = 18
 
 CUT_WIDTH = 0.01
 
@@ -78,7 +80,10 @@ box._draw_width_by_depth_side(marginx, marginy)
 drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy, BOX_WIDTH/2)
 drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, True)
 
-# draw the logo
+# text and logo
+pdfmetrics.registerFont(TTFont('remington', 'Remington-Noiseless.ttf'))
+box._doc.setFont('remington', 27)
+box._write(marginx + BOX_LENGTH - 48, marginy + 110, "6element")
 logo = ImageReader('logo.png')
 width = 20
 box._place_logo(logo, marginx + BOX_LENGTH - 40, marginy + 15, width, width*180/156)
