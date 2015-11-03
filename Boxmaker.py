@@ -56,17 +56,11 @@ class Box():
     def _draw_width_by_depth_side(self,x0,y0):
         self._draw_horizontal_line(x0,y0,
             self._notch_length['w'],self._num_notches['w'],
-            self._thickness, -1*self._cut_width/2.0, True, True)
+            self._thickness, -1*self._cut_width/2.0, False, True)
         self._draw_horizontal_line(x0, y0+self._size['d']-self._thickness,
             self._notch_length['w'],self._num_notches['w'],
-            self._thickness, -1*self._cut_width/2.0, False, True)
-        # self._draw_vertical_line(x0,y0,
-        #     self._notch_length['d'], self._num_notches['d'],
-        #     self._thickness, -1*self._cut_width/2.0,True,True)
-        # self._draw_vertical_line(x0+self._size['w']-self._thickness, y0,
-        #     self._notch_length['d'],self._num_notches['d'],
-        #     self._thickness, -1*self._cut_width/2.0,False,True)
-
+            self._thickness, -1*self._cut_width/2.0, True, True)
+  
     def _draw_depth_by_height_side(self,x0,y0):
         self._draw_horizontal_line(x0,y0,
             self._notch_length['d'], self._num_notches['d'],
@@ -83,16 +77,10 @@ class Box():
     def _draw_width_by_height_side(self,x0,y0):
         self._draw_horizontal_line(x0, y0, 
             self._notch_length['w'], self._num_notches['w'],
-            self._thickness,self._cut_width/2.0, False, False);
+            self._thickness,self._cut_width/2.0, True, True);
         self._draw_horizontal_line(x0, y0+self._size['h']-self._thickness, 
             self._notch_length['w'], self._num_notches['w'],
-            self._thickness,self._cut_width/2.0, True, False);
-        self._draw_vertical_line(x0,y0,
-            self._notch_length['h'], self._num_notches['h'],
-            self._thickness, -1*self._cut_width/2.0, False, False)
-        self._draw_vertical_line(x0+self._size['w']-self._thickness,y0,
-            self._notch_length['h'], self._num_notches['h'],
-            self._thickness, -1*self._cut_width/2.0, False, False)
+            self._thickness,self._cut_width/2.0, False, True);
 
     def _compute_dimensions(self):
         # first enlarge the box to compensate for cut width

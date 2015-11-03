@@ -33,7 +33,7 @@ SCREEN_TO_METALY1 = 6
 SCREEN_TO_METALY2 = 108
 
 marginx = 100
-marginy = 10
+marginy = 20
 
 ##### preparation (box and field)
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
@@ -75,8 +75,8 @@ box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, marginy)
 
 # the field
-drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2)
-drawField(marginx + MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2, True)
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy, BOX_WIDTH/2)
+drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, True)
 
 # draw the logo
 logo = ImageReader('logo.png')
@@ -118,8 +118,11 @@ box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, 2 * marginy + 
 ################# render the sides parts
 box._doc.setStrokeColor(blue)
 box._draw_width_by_height_side(marginx, 3 * marginy + 2 * BOX_WIDTH)
+box._draw_line(marginx + MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH +  BOX_INNER_HEIGHT)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH +  BOX_INNER_HEIGHT)
 box._draw_width_by_height_side(marginx, 3 * marginy + 2 * BOX_WIDTH + box._size['h'] + marginy)
-box._draw_depth_by_height_side(marginx, 3 * marginy + 2 * BOX_WIDTH + box._size['h']*2 + 2*marginy)
-# box._draw_depth_by_height_side(5, (5 + box._size['h'])*3 + 5)
+box._draw_line(marginx + MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] +  BOX_INNER_HEIGHT)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] +  BOX_INNER_HEIGHT)
+
 box._doc.save()
 
