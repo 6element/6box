@@ -164,7 +164,7 @@ class SystemeSpires:
             nb = math.sqrt(b[0]*b[0]+b[1]*b[1])
             return [sens*b[1]/nb, -sens*b[0]/nb]
         tmax = (self.xmax-self.xmin)
-        te = 1.0*tmax/100
+        te = 1.0*tmax/500
         xarray = numpy.array([x0])
         zarray = numpy.array([z0])
         x = x0

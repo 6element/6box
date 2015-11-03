@@ -5,6 +5,7 @@ from reportlab.lib.colors import black
 from reportlab.lib.colors import red
 from reportlab.lib.colors import blue
 from reportlab.lib.colors import green
+from reportlab.lib.utils import ImageReader
 
 PLATE_LENGTH = 1530
 PLATE_WIDTH = 1000
@@ -77,6 +78,10 @@ box._draw_width_by_depth_side(marginx, marginy)
 drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2)
 drawField(marginx + MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2, True)
 
+# draw the logo
+logo = ImageReader('logo.png')
+width = 20
+box._place_logo(logo, marginx + BOX_LENGTH - 40, marginy + 15, width, width*180/156)
 
 # draw the screen
 box._doc.setStrokeColor(green)
