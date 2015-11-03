@@ -201,11 +201,14 @@ class SystemeSpires:
             plot(z,x,style)
             [x,z] = self.ligneE(p[0],p[1],-1)
             plot(z,x,style)
+
     def lignesE(self,points):
         res = []
         for p in points:
-            res += [self.ligneE(p[0],p[1],1)]
-            res += [self.ligneE(p[0],p[1],-1)]
+            calc = self.ligneE(p[0],p[1],1)
+            x = calc[1][numpy.logical_not(numpy.isnan(calc[1]))]
+            y = calc[0][numpy.logical_not(numpy.isnan(calc[0]))]
+            res += [[list(x), list(y)]]
         return res
 
             

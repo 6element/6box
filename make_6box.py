@@ -1,5 +1,6 @@
 import Boxmaker
 
+import json
 from reportlab.lib.colors import black
 from reportlab.lib.colors import red
 from reportlab.lib.colors import blue
@@ -31,16 +32,52 @@ SCREEN_TO_METALY1 = 6
 SCREEN_TO_METALY2 = 108
 
 marginx = 100
-marginy = 5
+marginy = 10
 
+##### preparation (box and field)
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
 box._compute_dimensions()
+
+def drawField(X, Y, width, flip = False):
+	with open("field.json", "r") as inputfile:
+		iso = json.loads(inputfile.read())
+	preparedCurves = []
+	for curve in iso:
+		x = curve[0]
+		y = curve[1]
+		scale = width/(y[-1]-y[0])
+		xp = x[::-1] + x
+		yp = map(lambda x: -x, y[::-1]) + y
+		x0 = xp[0]
+		y0 = yp[0]
+		if flip:
+			xpp = map(lambda x: -scale*(x - x0) + X, xp)
+		else:
+			xpp = map(lambda x: scale*(x - x0) + X, xp)
+		ypp = map(lambda x: scale*(x - y0) + Y, yp)
+		preparedCurves += [[xpp, ypp]]
+
+	for curve in preparedCurves:
+		x = curve[0]
+		y = curve[1]
+		xprev = x[0]
+		yprev = y[0]
+		for x,y in zip(x[1:],y[1:]):
+			box._draw_line(xprev, yprev, x, y)
+			xprev = x
+			yprev = y
 
 
 ################# render the top part
 box._initialize_document("all.pdf", PLATE_LENGTH, PLATE_WIDTH)
 box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, marginy)
+
+# the field
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2)
+drawField(marginx + MATERIAL_THICKNESS, marginy + MATERIAL_THICKNESS, (BOX_WIDTH - 2*MATERIAL_THICKNESS)/2, True)
+
+
 # draw the screen
 box._doc.setStrokeColor(green)
 box._draw_line(marginx + SCREEN_POSITION_X, marginy + SCREEN_POSITION_Y, marginx + SCREEN_POSITION_X + SCREEN_WIDTH, marginy + SCREEN_POSITION_Y)
