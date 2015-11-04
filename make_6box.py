@@ -13,13 +13,13 @@ PLATE_LENGTH = 1530
 PLATE_WIDTH = 1000
 MATERIAL_THICKNESS = 5
 
-BOX_LENGTH = 270
+BOX_LENGTH = 220
 BOX_WIDTH = 140
 BOX_INNER_HEIGHT = 18
 
 CUT_WIDTH = 0.01
 
-SCREEN_POSITION_X = 20
+SCREEN_POSITION_X = 8
 SCREEN_POSITION_Y = 15
 SCREEN_WIDTH = 194
 SCREEN_HEIGHT = 111
@@ -41,7 +41,7 @@ marginy = 20
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
 box._compute_dimensions()
 
-def drawField(X, Y, width, flip = False):
+def drawField(X, Y, width, lineNum, flip = False):
 	with open("field.json", "r") as inputfile:
 		iso = json.loads(inputfile.read())
 	preparedCurves = []
@@ -60,15 +60,14 @@ def drawField(X, Y, width, flip = False):
 		ypp = map(lambda x: scale*(x - y0) + Y, yp)
 		preparedCurves += [[xpp, ypp]]
 
-	for curve in preparedCurves:
-		x = curve[0]
-		y = curve[1]
-		xprev = x[0]
-		yprev = y[0]
-		for x,y in zip(x[1:],y[1:]):
-			box._draw_line(xprev, yprev, x, y)
-			xprev = x
-			yprev = y
+	x = preparedCurves[lineNum][0]
+	y = preparedCurves[lineNum][1]
+	xprev = x[0]
+	yprev = y[0]
+	for x,y in zip(x[1:],y[1:]):
+		box._draw_line(xprev, yprev, x, y)
+		xprev = x
+		yprev = y
 
 
 ################# render the top part
@@ -77,16 +76,22 @@ box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, marginy)
 
 # the field
-drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy, BOX_WIDTH/2)
-drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, True)
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, 1)
+drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, 0, True)
 
 # text and logo
 pdfmetrics.registerFont(TTFont('remington', 'Remington-Noiseless.ttf'))
-box._doc.setFont('remington', 27)
-box._write(marginx + BOX_LENGTH - 48, marginy + 110, "6element")
+pdfmetrics.registerFont(TTFont('raleway', 'Raleway-Medium.ttf'))
+box._doc.setFont('remington', 18)
+box._write(marginx + SCREEN_POSITION_X + SCREEN_WIDTH + 3 , marginy + 90, "6element")
+box._doc.setFont('raleway', 9)
+box._write(marginx + SCREEN_POSITION_X + SCREEN_WIDTH + 15, marginy + 80, "par")
 logo = ImageReader('logo.png')
-width = 20
-box._place_logo(logo, marginx + BOX_LENGTH - 40, marginy + 15, width, width*180/156)
+width = 18
+box._place_logo(logo, marginx + SCREEN_POSITION_X + SCREEN_WIDTH + 8, marginy + 53, width, width*180/156)
+box._doc.setFont('raleway', 6)
+box._write(marginx + SCREEN_POSITION_X + SCREEN_WIDTH + 3, marginy + 45, "En cas de soucis :")
+box._write(marginx + SCREEN_POSITION_X + SCREEN_WIDTH + 3, marginy + 40, "http://ants.builders/support")
 
 # draw the screen
 box._doc.setStrokeColor(green)
@@ -112,6 +117,27 @@ box._draw_line(marginx + SCREEN_POSITION_X + SCREEN_TO_METALX2, marginy + SCREEN
 ################## render the bottom part
 box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, 2 * marginy + BOX_WIDTH)
+
+# the field
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7)
+drawField(marginx + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7, True)
+
+
+box._doc.setStrokeColor(green)
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6)
+attach_width = 15
+etiration=2.2
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y - attach_width/2)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y + attach_width/2, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2*BOX_WIDTH)
+box._draw_bezier(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2)
+box._draw_bezier(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y - attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y - attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y + attach_width/2 ,
+	marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW2Y + attach_width/2)
 # screws
 box._doc.setStrokeColor(red)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)

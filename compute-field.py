@@ -17,7 +17,7 @@ NB = 6 + 2
 figure(figsize=(7,7))
 solenoide.plot_lignesB([[0.0,0.0], [0.15,0.0], [0.3,0.0], [0.45,0.0], [0.6,0.0],[0.75,0.0],[0.9,0.0]],'b')
 limits = []
-for x in numpy.linspace(1.2, 2, NB, False):
+for x in numpy.linspace(1.3, 2, NB, False):
 	limits += [[0., x]]
 iso = solenoide.lignesE(limits)
 # iso = solenoide.lignesE([[0., 2]])

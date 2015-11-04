@@ -33,25 +33,6 @@ class Box():
         self._cut_width = float(cut_width)
         self._desired_notch_length = float(notch_length)
 
-    def render(self,):
-        # set things up
-        self._compute_dimensions()
-        self._initialize_document("test.pdf")
-
-        # 1. a W x H side (the back)
-        self._draw_width_by_height_side(self._size['d'] + self._margin*2.0, self._margin)
-        # 2. a D x H side (the left side)
-        self._draw_depth_by_height_side(self._margin,self._size['h'] + self._margin*2.0)
-        # 3. a W X D side (the bottom)
-        self._draw_width_by_depth_side(self._size['d'] + self._margin*2.0, self._size['h'] + self._margin*2.0)
-        # 4. a D x H side (the left side)
-        self._draw_depth_by_height_side(self._size['d'] + self._size['w'] + self._margin*3.0,self._size['h'] + self._margin*2.0)
-        # 5. a W x H side (the front)
-        self._draw_width_by_height_side(self._size['d'] + self._margin*2.0, self._size['h'] + self._size['d'] + self._margin*3.0)        
-        # 6. a W X D side (the top)
-        self._draw_width_by_depth_side(self._size['d'] + self._margin*2.0, self._size['h']*2.0 + self._size['d'] + self._margin*4.0)
-        # and write out the PDF
-        self._doc.save()
 
     def _draw_width_by_depth_side(self,x0,y0):
         self._draw_horizontal_line(x0,y0,
@@ -60,19 +41,6 @@ class Box():
         self._draw_horizontal_line(x0, y0+self._size['d']-self._thickness,
             self._notch_length['w'],self._num_notches['w'],
             self._thickness, -1*self._cut_width/2.0, True, True)
-  
-    def _draw_depth_by_height_side(self,x0,y0):
-        self._draw_horizontal_line(x0,y0,
-            self._notch_length['d'], self._num_notches['d'],
-            self._thickness, self._cut_width/2, False, False)
-        self._draw_horizontal_line(x0,y0+self._size['h']-self._thickness,
-            self._notch_length['d'],self._num_notches['d'],
-            self._thickness, self._cut_width/2.0, True, False)
-        self._draw_vertical_line(x0,y0,self._notch_length['h'],self._num_notches['h'],
-            self._thickness, self._cut_width/2.0, False, False)
-        self._draw_vertical_line(x0+self._size['d']-self._thickness, y0,
-            self._notch_length['h'],self._num_notches['h'],
-            self._thickness,-1*self._cut_width/2.0,False, False)
 
     def _draw_width_by_height_side(self,x0,y0):
         self._draw_horizontal_line(x0, y0, 
@@ -173,6 +141,9 @@ class Box():
 
     def _draw_circle(self, X, Y, radius):
         self._doc.circle(X*mm, Y*mm, radius*mm)
+
+    def _draw_bezier(self, x1, y1, x2, y2, x3, y3, x4, y4):
+        self._doc.bezier(x1*mm, y1*mm, x2*mm, y2*mm, x3*mm, y3*mm, x4*mm, y4*mm)
 
     def _place_logo(self, logo, X, Y, W, H):
         self._doc.drawImage(logo, X*mm, Y*mm, W*mm, H*mm, mask='auto')
