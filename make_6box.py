@@ -41,7 +41,7 @@ marginy = 20
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
 box._compute_dimensions()
 
-def drawField(X, Y, width, lineNum, flip = False):
+def drawField(X, Y, width, lineNum, flip = 1):
 	with open("field.json", "r") as inputfile:
 		iso = json.loads(inputfile.read())
 	preparedCurves = []
@@ -53,10 +53,7 @@ def drawField(X, Y, width, lineNum, flip = False):
 		yp = map(lambda x: -x, y[::-1]) + y
 		x0 = xp[0]
 		y0 = yp[0]
-		if flip:
-			xpp = map(lambda x: -scale*(x - x0) + X, xp)
-		else:
-			xpp = map(lambda x: scale*(x - x0) + X, xp)
+		xpp = map(lambda x: flip * scale*(x - x0) + X, xp)
 		ypp = map(lambda x: scale*(x - y0) + Y, yp)
 		preparedCurves += [[xpp, ypp]]
 
@@ -77,7 +74,7 @@ box._draw_width_by_depth_side(marginx, marginy)
 
 # the field
 drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, 0)
-drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, 0, True)
+drawField(marginx + MATERIAL_THICKNESS, marginy, BOX_WIDTH/2, 0, -1)
 
 # text and logo
 pdfmetrics.registerFont(TTFont('remington', 'Remington-Noiseless.ttf'))
@@ -120,30 +117,43 @@ box._draw_width_by_depth_side(marginx, 2 * marginy + BOX_WIDTH)
 
 # the field
 drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7)
-drawField(marginx + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7, True)
+drawField(marginx + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7, -1)
 
 
-box._doc.setStrokeColor(green)
-drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6)
-attach_width = 15
-etiration = 2.2
-insert_length = 10
-insert_width = 5
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS + insert_width)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS + insert_width, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS + insert_width)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + MATERIAL_THICKNESS + insert_width, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2)
-box._draw_bezier(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
-	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
-	marginx + BOX_LENGTH - MATERIAL_THICKNESS - (SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2 ,
-	marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width )
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS  )
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS - insert_length, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + 2 * BOX_WIDTH)
 
+
+def draw_attache(x, y, flip = 1):
+	box._doc.setStrokeColor(green)
+	drawField(x, y, BOX_WIDTH/2, 6, flip)
+	attach_width = 15
+	etiration = flip * 1.5
+	insert_length = flip * 10
+	insert_width = 5
+	box._draw_line(x, y, x, y + MATERIAL_THICKNESS)
+	box._draw_line(x, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS)
+	box._draw_line(x - insert_length, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS + insert_width)
+	box._draw_line(x, y + MATERIAL_THICKNESS + insert_width, x - insert_length, y + MATERIAL_THICKNESS + insert_width)
+	box._draw_line(x, y + MATERIAL_THICKNESS + insert_width, x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2)
+	box._draw_bezier(x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
+		x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
+		x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2 ,
+		x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2)
+	box._draw_line(x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2, x, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width )
+	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width)
+	box._draw_line(x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS  )
+	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS)
+	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x, y + BOX_WIDTH)
+	box._doc.setStrokeColor(green)
+	if flip == 1:
+		box._draw_circle(x - (SCREEN_POSITION_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+		box._draw_circle(x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+	else:
+		box._draw_circle(x - (SCREEN_POSITION_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+		box._draw_circle(x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
+
+
+draw_attache(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH)
+draw_attache(marginx  + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, -1)
 # screws
 box._doc.setStrokeColor(red)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
