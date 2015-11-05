@@ -9,8 +9,8 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 
-PLATE_LENGTH = 1530
-PLATE_WIDTH = 1000
+PLATE_LENGTH = 1000
+PLATE_WIDTH = 500
 MATERIAL_THICKNESS = 5
 
 BOX_LENGTH = 220
@@ -34,8 +34,8 @@ SCREEN_TO_METALX2 = 184
 SCREEN_TO_METALY1 = 6
 SCREEN_TO_METALY2 = 108
 
-marginx = 100
-marginy = 20
+marginx = 70
+marginy = 10
 
 ##### preparation (box and field)
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
@@ -68,7 +68,7 @@ def drawField(X, Y, width, lineNum, flip = 1):
 
 
 ################# render the top part
-box._initialize_document("all.pdf", PLATE_LENGTH, PLATE_WIDTH)
+box._initialize_document("6box_wood.pdf", PLATE_LENGTH, PLATE_WIDTH)
 box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, marginy)
 
@@ -164,12 +164,18 @@ box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW2X, 2 * marginy + 
 
 ################# render the sides parts
 box._doc.setStrokeColor(blue)
-box._draw_width_by_height_side(marginx, 3 * marginy + 2 * BOX_WIDTH)
-box._draw_line(marginx + MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH +  BOX_INNER_HEIGHT)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + 2 * BOX_WIDTH +  BOX_INNER_HEIGHT)
-box._draw_width_by_height_side(marginx, 3 * marginy + 2 * BOX_WIDTH + box._size['h'] + marginy)
-box._draw_line(marginx + MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] +  BOX_INNER_HEIGHT)
-box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + 2 * BOX_WIDTH + box._size['h'] +  BOX_INNER_HEIGHT)
+www = 2*BOX_WIDTH
+
+box._draw_width_by_height_side(marginx, 3 * marginy + www)
+box._draw_line(marginx + MATERIAL_THICKNESS, 3 * marginy + www + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 3 * marginy + www + BOX_INNER_HEIGHT)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + www + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + www + BOX_INNER_HEIGHT)
+
+box._draw_width_by_height_side(marginx, 4 * marginy + (BOX_INNER_HEIGHT + MATERIAL_THICKNESS) + www)
+box._draw_line(marginx + MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + 2*MATERIAL_THICKNESS + www, marginx + MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + MATERIAL_THICKNESS + www + BOX_INNER_HEIGHT)
+box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + 2*MATERIAL_THICKNESS + www, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + MATERIAL_THICKNESS + www + BOX_INNER_HEIGHT)
+
+box._doc.setStrokeColor(red)
+box._draw_rectangle(marginx + 40, 4 * marginy + (BOX_INNER_HEIGHT + MATERIAL_THICKNESS) + www +  (BOX_INNER_HEIGHT + MATERIAL_THICKNESS)/2 -3, 10, 5)
 
 box._doc.save()
 

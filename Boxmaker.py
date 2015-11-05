@@ -142,6 +142,9 @@ class Box():
     def _draw_circle(self, X, Y, radius):
         self._doc.circle(X*mm, Y*mm, radius*mm)
 
+    def _draw_rectangle(self, X, Y, w, h):
+        self._doc.rect(X*mm, Y*mm, w*mm, h*mm)
+
     def _draw_bezier(self, x1, y1, x2, y2, x3, y3, x4, y4):
         self._doc.bezier(x1*mm, y1*mm, x2*mm, y2*mm, x3*mm, y3*mm, x4*mm, y4*mm)
 

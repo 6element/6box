@@ -12,7 +12,7 @@ for k in range(1,5):
     solenoide.ajouter(Spire(1.0,zs, I))
     solenoide.ajouter(Spire(1.0,-zs, I))
 
-NB = 6 + 2
+NB = 7 + 2
 
 figure(figsize=(7,7))
 solenoide.plot_lignesB([[0.0,0.0], [0.15,0.0], [0.3,0.0], [0.45,0.0], [0.6,0.0],[0.75,0.0],[0.9,0.0]],'b')
