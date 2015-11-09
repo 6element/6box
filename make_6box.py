@@ -15,7 +15,7 @@ MATERIAL_THICKNESS = 5
 
 BOX_LENGTH = 220
 BOX_WIDTH = 140
-BOX_INNER_HEIGHT = 18
+BOX_INNER_HEIGHT = 5 * MATERIAL_THICKNESS 
 
 CUT_WIDTH = 0.01
 
@@ -116,15 +116,12 @@ box._doc.setStrokeColor(blue)
 box._draw_width_by_depth_side(marginx, 2 * marginy + BOX_WIDTH)
 
 # the field
-drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7)
-drawField(marginx + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 7, -1)
+drawField(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6)
+drawField(marginx + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6, -1)
 
-
-
-
-def draw_attache(x, y, flip = 1):
-	box._doc.setStrokeColor(green)
-	drawField(x, y, BOX_WIDTH/2, 6, flip)
+def draw_attache(x, y, fieldnum, flip = 1, colorout=green, colorin=green):
+	box._doc.setStrokeColor(colorout)
+	drawField(x, y, BOX_WIDTH/2, fieldnum, flip)
 	attach_width = 15
 	etiration = flip * 1.5
 	insert_length = flip * 10
@@ -138,12 +135,12 @@ def draw_attache(x, y, flip = 1):
 		x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y - attach_width/2 ,
 		x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2 ,
 		x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2)
-	box._draw_line(x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2, x, 2 * marginy + 2 * BOX_WIDTH - MATERIAL_THICKNESS - insert_width )
+	box._draw_line(x, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y + attach_width/2, x,  BOX_WIDTH + y - MATERIAL_THICKNESS - insert_width )
 	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width)
 	box._draw_line(x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS  )
 	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS)
 	box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x, y + BOX_WIDTH)
-	box._doc.setStrokeColor(green)
+	box._doc.setStrokeColor(colorin)
 	if flip == 1:
 		box._draw_circle(x - (SCREEN_POSITION_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
 		box._draw_circle(x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
@@ -151,9 +148,10 @@ def draw_attache(x, y, flip = 1):
 		box._draw_circle(x - (SCREEN_POSITION_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
 		box._draw_circle(x - (SCREEN_POSITION_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*flip, y + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
 
+for i in [5 ,4, 3, 2, 1]:
+	draw_attache(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, i)
+	draw_attache(marginx  + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, i, -1)
 
-draw_attache(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH)
-draw_attache(marginx  + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, -1)
 # screws
 box._doc.setStrokeColor(red)
 box._draw_circle(marginx + SCREEN_POSITION_X + SCREEN_TO_SCREW1X, 2 * marginy + BOX_WIDTH + SCREEN_POSITION_Y + SCREEN_TO_SCREW1Y, RADIUS)
@@ -179,3 +177,13 @@ box._draw_rectangle(marginx + 40, 4 * marginy + (BOX_INNER_HEIGHT + MATERIAL_THI
 
 box._doc.save()
 
+
+# ################# plastic 
+# box._initialize_document("6box_plexi1.pdf", PLATE_LENGTH, PLATE_WIDTH)
+# box._doc.setStrokeColor(blue)
+# marginx = 60
+# marginy = 10
+
+# draw_attache(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy  , 1, 1, blue, red)
+# draw_attache(marginx  + MATERIAL_THICKNESS, 2 * marginy  , 1, -1, blue, red)
+# box._doc.save()
