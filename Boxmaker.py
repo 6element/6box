@@ -1,7 +1,8 @@
-import logging, time
+import logging, time, json
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-
+from reportlab.graphics import shapes
+from reportlab.lib.colors import blue
 
 class Box():
     '''
@@ -34,13 +35,15 @@ class Box():
         self._desired_notch_length = float(notch_length)
 
 
-    def _draw_width_by_depth_side(self,x0,y0):
-        self._draw_horizontal_line(x0,y0,
+    def _draw_width_by_depth_side(self, x0, y0, color = blue):
+        g = shapes.Group()
+        g.add(self._draw_horizontal_line(x0,y0,
             self._notch_length['w'],self._num_notches['w'],
-            self._thickness, -1*self._cut_width/2.0, False, True)
-        self._draw_horizontal_line(x0, y0+self._size['d']-self._thickness,
+            self._thickness, -1*self._cut_width/2.0, False, True, color))
+        g.add(self._draw_horizontal_line(x0, y0+self._size['d']-self._thickness,
             self._notch_length['w'],self._num_notches['w'],
-            self._thickness, -1*self._cut_width/2.0, True, True)
+            self._thickness, -1*self._cut_width/2.0, True, True, color))
+        return g
 
     def _draw_width_by_height_side(self,x0,y0):
         self._draw_horizontal_line(x0, y0, 
@@ -87,63 +90,75 @@ class Box():
         self._doc.setPageSize( [width*mm, height*mm] )
         self._doc.setLineWidth(0.1)
 
-    def _draw_horizontal_line(self, x0,y0,notch_width,notch_count,notch_height,cut_width,flip,smallside):
+    def _draw_horizontal_line(self, x0,y0,notch_width,notch_count,notch_height,cut_width,flip,smallside, color):
         x = x0
         y = y0
+        g = shapes.Group()
         for step in range(0,int(notch_count)):
             y = y0 if (((step%2)==0)^flip) else y0+notch_height
             if step==0: # start first edge in the right place
                 if smallside:
-                    self._draw_line(x+notch_height,y,x+notch_width+cut_width,y)
+                    g.add(self._draw_line(x+notch_height,y,x+notch_width+cut_width,y, color))
                 else:
-                    self._draw_line(x,y,x+notch_width+cut_width,y)
+                    g.add(self._draw_line(x,y,x+notch_width+cut_width,y, color))
             elif step==(notch_count-1): # shorter last edge
-                self._draw_line(x-cut_width,y,x+notch_width-notch_height,y);
+                g.add(self._draw_line(x-cut_width,y,x+notch_width-notch_height,y, color))
             elif step%2==0:
-                self._draw_line(x-cut_width,y,x+notch_width+cut_width,y);
+                g.add(self._draw_line(x-cut_width,y,x+notch_width+cut_width,y, color))
             else:
-                self._draw_line(x+cut_width,y,x+notch_width-cut_width,y);
+                g.add(self._draw_line(x+cut_width,y,x+notch_width-cut_width,y, color))
             if step<(notch_count-1):
                 if step%2==0:
-                    self._draw_line(x+notch_width+cut_width,y0+notch_height,x+notch_width+cut_width,y0);
+                    g.add(self._draw_line(x+notch_width+cut_width,y0+notch_height,x+notch_width+cut_width,y0, color))
                 else:
-                    self._draw_line(x+notch_width-cut_width,y0+notch_height,x+notch_width-cut_width,y0);
-            x = x + notch_width;
+                    g.add(self._draw_line(x+notch_width-cut_width,y0+notch_height,x+notch_width-cut_width,y0, color))
+            x = x + notch_width
 
-    def _draw_vertical_line(self, x0,y0,notch_width,notch_count,notch_height,cut_width,flip,smallside):
-        x = x0
-        y = y0
-        for step in range(0,int(notch_count)):
-            x = x0 if (((step%2)==0)^flip) else x0+notch_height
-            if step==0:
-                if smallside:
-                    self._draw_line(x, y+notch_height, x, y+notch_width+cut_width)
-                else:
-                    self._draw_line(x,y,x,y+notch_width+cut_width)
-            elif step==(notch_count-1):
-                if smallside:
-                    self._draw_line(x,y-cut_width,x,y+notch_width-notch_height)
-                else:
-                    self._draw_line(x,y-cut_width,x,y+notch_width)
-            elif step%2==0:
-                self._draw_line(x,y-cut_width,x,y+notch_width+cut_width)
-            else:
-                self._draw_line(x,y+cut_width,x,y+notch_width-cut_width)
-            if step<(notch_count-1):
-                if step%2==0:
-                    self._draw_line(x0+notch_height, y+notch_width+cut_width,x0,y+notch_width+cut_width)
-                else:
-                    self._draw_line(x0+notch_height, y+notch_width-cut_width,x0,y+notch_width-cut_width)
-            y = y+notch_width
+        return g
 
-    def _draw_line(self, fromX,fromY,toX,toY):
-        self._doc.line(fromX*mm,fromY*mm,toX*mm,toY*mm)
+    def drawField(self, X, Y, width, lineNum, flip = 1, color = blue):
+        with open("field.json", "r") as inputfile:
+            iso = json.loads(inputfile.read())
+        preparedCurves = []
+        for curve in iso:
+            x = curve[0]
+            y = curve[1]
+            scale = width/(y[-1]-y[0])
+            xp = x[::-1] + x
+            yp = map(lambda x: -x, y[::-1]) + y
+            x0 = xp[0]
+            y0 = yp[0]
+            xpp = map(lambda x: flip * scale*(x - x0) + X, xp)
+            ypp = map(lambda x: scale*(x - y0) + Y, yp)
+            preparedCurves += [[xpp, ypp]]
 
-    def _draw_circle(self, X, Y, radius):
-        self._doc.circle(X*mm, Y*mm, radius*mm)
+        xp = preparedCurves[lineNum][0]
+        yp = preparedCurves[lineNum][1]
+        coords = []
+        for x,y in zip(xp, yp):
+            coords += [x*mm, y*mm]
+        p = shapes.PolyLine(coords)
+        p.strokeColor = color
+        return p
 
-    def _draw_rectangle(self, X, Y, w, h):
-        self._doc.rect(X*mm, Y*mm, w*mm, h*mm)
+    def _draw_line(self, fromX,fromY,toX,toY, color = blue):
+        l = shapes.Line(fromX*mm,fromY*mm,toX*mm,toY*mm)
+        l.strokeColor = color
+        return l
+
+    def _draw_circle(self, X, Y, radius, color=blue):
+        c = shapes.Circle(X*mm, Y*mm, radius*mm)
+        c.fillColor = None
+        c.strokeColor = color
+        c.strokeWidth = 1
+        return c
+
+    def _draw_rectangle(self, X, Y, w, h, color = blue):
+        r = shapes.Rect(X*mm, Y*mm, w*mm, h*mm)
+        r.fillColor = None
+        r.strokeColor = color
+        r.strokeWidth = 1
+        return r
 
     def _draw_bezier(self, x1, y1, x2, y2, x3, y3, x4, y4):
         self._doc.bezier(x1*mm, y1*mm, x2*mm, y2*mm, x3*mm, y3*mm, x4*mm, y4*mm)
