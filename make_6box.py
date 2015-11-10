@@ -68,52 +68,52 @@ boxTop.add(shapes.Group(
 
 # the metal part
 boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1))
-boxTop.drawOn(box._doc, 300, 200)
+# boxTop.drawOn(box._doc, 300, 200)
 
 # ################## render the bottom part
-# box._doc.setStrokeColor(blue)
-# box._draw_width_by_depth_side(marginxBottom, 2 * marginy + BOX_WIDTH)
+boxBottom = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
 
-# # the field
-# box.drawField(marginxBottom + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6)
-# box.drawField(marginxBottom + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, BOX_WIDTH/2, 6, -1)
+boxBottom.add(box._draw_width_by_depth_side(0, 0))
 
-# def draw_side(x, y, attach_height, fieldnum, fliph = 1, colorout = green, colorin = green):
-# 	box._doc.setStrokeColor(colorout)
-# 	f = box.drawField(x, y, BOX_WIDTH/2, fieldnum, fliph)
-# 	attach_width = 15
-# 	etiration = fliph * 1.5
-# 	insert_length = fliph * 10
-# 	insert_width = 5
-# 	l1 = shapes.Line(x, y, x, y + MATERIAL_THICKNESS)
-# 	l2 = shapes.Line(x, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS)
-# 	l3 = shapes.Line(x - insert_length, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS + insert_width)
-# 	l4 = shapes.Line(x, y + MATERIAL_THICKNESS + insert_width, x - insert_length, y + MATERIAL_THICKNESS + insert_width)
+# the field
+boxBottom.add(box.drawField(BOX_LENGTH - MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 6))
+boxBottom.add(box.drawField(MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 6, -1))
+
+
+def draw_side(x, y, attach_height, fieldnum, fliph = 1, colorout = green, colorin = green):
+	f = box.drawField(x, y, BOX_WIDTH/2, fieldnum, fliph, colorout)
+	attach_width = 15
+	etiration = fliph * 1.1
+	insert_length = fliph * 10
+	insert_width = 5
+	l1 = box._draw_line(x, y, x, y + MATERIAL_THICKNESS, colorout)
+	l2 = box._draw_line(x, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS, colorout)
+	l3 = box._draw_line(x - insert_length, y + MATERIAL_THICKNESS, x - insert_length, y + MATERIAL_THICKNESS + insert_width, colorout)
+	l4 = box._draw_line(x, y + MATERIAL_THICKNESS + insert_width, x - insert_length, y + MATERIAL_THICKNESS + insert_width, colorout)
 	
-# 	l5 = shapes.Line(x, y + MATERIAL_THICKNESS + insert_width, x, y + attach_height - attach_width/2)
-# 	b = box._draw_bezier(x, y + attach_height - attach_width/2 ,
-# 		x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + attach_height - attach_width/2 ,
-# 		x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + attach_height + attach_width/2 ,
-# 		x, y + attach_height + attach_width/2)
+	l5 = box._draw_line(x, y + MATERIAL_THICKNESS + insert_width, x, y + attach_height - attach_width/2, colorout)
+	b = box._draw_polyline([
+		x, y + attach_height - attach_width/2,
+		x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + attach_height - attach_width/2 ,
+		x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*etiration, y + attach_height + attach_width/2 ,
+		x, y + attach_height + attach_width/2], colorout)
+	l6 = box._draw_line(x, y + attach_height + attach_width/2, x,  BOX_WIDTH + y - MATERIAL_THICKNESS - insert_width , colorout)
 	
+	l7 = box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, colorout)
+	l8 = box._draw_line(x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS  , colorout)
+	l9 = box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS, colorout)
+	l10 = box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x, y + BOX_WIDTH, colorout)
+	if fliph == 1:
+		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
+		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + attach_height, RADIUS)
+	else:
+		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
+		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*fliph, y + attach_height, RADIUS)
+	return shapes.Group(f, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, p1, p2, b)
 
-# 	l6 = shapes.Line(x, y + attach_height + attach_width/2, x,  BOX_WIDTH + y - MATERIAL_THICKNESS - insert_width )
-# 	l7 = shapes.Line(x, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width)
-# 	l8 = shapes.Line(x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS - insert_width, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS  )
-# 	l9 = shapes.Line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS)
-# 	l10 = shapes.Line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x, y + BOX_WIDTH)
-# 	l11 = box._doc.setStrokeColor(colorin)
-# 	if fliph == 1:
-# 		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
-# 		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + attach_height, RADIUS)
-# 	else:
-# 		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
-# 		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*fliph, y + attach_height, RADIUS)
-# 	return shapes.Group(f, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, p1, p2)
-
-# for i in [5 ,4, 3, 2, 1]:
-# 	draw_side(marginxBottom + BOX_LENGTH - MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, i)
-# 	draw_side(marginxBottom  + MATERIAL_THICKNESS, 2 * marginy + BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, i, -1)
+for i in [5 ,4, 3, 2, 1]:
+	boxBottom.add(draw_side(BOX_LENGTH - MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, i))
+	boxBottom.add(draw_side(MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, i, -1))
 
 
 # draw_side(marginxBottom + 285, marginy, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 1)
@@ -131,14 +131,16 @@ boxTop.drawOn(box._doc, 300, 200)
 # draw_side(250, marginy + 2*BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, 5, -1)
 
 
-# # screws
-# box._doc.setStrokeColor(red)
-# box._draw_circle(marginxBottom + SCREEN_X + SCREEN_TO_SCREW1X, 2 * marginy + BOX_WIDTH + SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS)
-# box._draw_circle(marginxBottom + SCREEN_X + SCREEN_TO_SCREW1X, 2 * marginy + BOX_WIDTH + SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS)
-# box._draw_circle(marginxBottom + SCREEN_X + SCREEN_TO_SCREW2X, 2 * marginy + BOX_WIDTH + SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS)
-# box._draw_circle(marginxBottom + SCREEN_X + SCREEN_TO_SCREW2X, 2 * marginy + BOX_WIDTH + SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS)
+# screws
+boxBottom.add(shapes.Group(
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, red),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, red),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, red),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, red)
+))
 
 
+boxBottom.drawOn(box._doc, 300, 200)
 # ################# render the sides parts
 # box._doc.setStrokeColor(blue)
 # www = 2*BOX_WIDTH

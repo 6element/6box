@@ -141,7 +141,13 @@ class Box():
         p.strokeColor = color
         return p
 
-    def _draw_line(self, fromX,fromY,toX,toY, color = blue):
+    def _draw_polyline(self, coords, color = blue):
+        mmcoords = map(lambda x: x*mm, coords)
+        p = shapes.PolyLine(mmcoords)
+        p.strokeColor = color
+        return p
+
+    def _draw_line(self, fromX, fromY, toX, toY, color = blue):
         l = shapes.Line(fromX*mm,fromY*mm,toX*mm,toY*mm)
         l.strokeColor = color
         return l
