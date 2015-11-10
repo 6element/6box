@@ -14,7 +14,7 @@ PLATE_LENGTH = 1000
 PLATE_WIDTH = 500
 MATERIAL_THICKNESS = 5
 
-BOX_LENGTH = 220
+BOX_LENGTH = 245
 BOX_WIDTH = 140
 BOX_INNER_HEIGHT = 5 * MATERIAL_THICKNESS 
 
@@ -45,30 +45,6 @@ box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH,
 box._compute_dimensions()
 box._initialize_document("6box_wood.pdf", PLATE_LENGTH, PLATE_WIDTH)
 
-
-################# render the top part
-boxTop = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
-
-boxTop.add(box._draw_width_by_depth_side(0, 0))
-
-# the field
-boxTop.add(box.drawField(BOX_LENGTH - MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0))
-boxTop.add(box.drawField(MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0, -1))
-
-# the screen
-boxTop.add(box._draw_rectangle(SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT, green))
-
-# screws
-boxTop.add(shapes.Group(
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green)
-))
-
-# the metal part
-boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1))
-# boxTop.drawOn(box._doc, 300, 200)
 
 # ################## render the bottom part
 boxBottom = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
@@ -140,24 +116,50 @@ boxBottom.add(shapes.Group(
 ))
 
 
-boxBottom.drawOn(box._doc, 300, 200)
-# ################# render the sides parts
-# box._doc.setStrokeColor(blue)
-# www = 2*BOX_WIDTH
-
-# box._draw_width_by_height_side(marginx, 3 * marginy + www)
-# box._draw_line(marginx + MATERIAL_THICKNESS, 3 * marginy + www + MATERIAL_THICKNESS, marginx + MATERIAL_THICKNESS, 3 * marginy + www + BOX_INNER_HEIGHT)
-# box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + www + MATERIAL_THICKNESS, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 3 * marginy + www + BOX_INNER_HEIGHT)
-
-# box._draw_width_by_height_side(marginx, 4 * marginy + (BOX_INNER_HEIGHT + MATERIAL_THICKNESS) + www)
-# box._draw_line(marginx + MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + 2*MATERIAL_THICKNESS + www, marginx + MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + MATERIAL_THICKNESS + www + BOX_INNER_HEIGHT)
-# box._draw_line(marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + 2*MATERIAL_THICKNESS + www, marginx + BOX_LENGTH - MATERIAL_THICKNESS, 4 * marginy + BOX_INNER_HEIGHT + MATERIAL_THICKNESS + www + BOX_INNER_HEIGHT)
-
-# box._doc.setStrokeColor(red)
-# box._draw_rectangle(marginx + 40, 4 * marginy + (BOX_INNER_HEIGHT + MATERIAL_THICKNESS) + www +  (BOX_INNER_HEIGHT + MATERIAL_THICKNESS)/2 -3, 10, 5)
+boxBottom.drawOn(box._doc, 65*mm, 15*mm)
 
 
-# ################ sides
+################# render the top part
+boxTop = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+
+boxTop.add(box._draw_width_by_depth_side(0, 0))
+
+# the field
+boxTop.add(box.drawField(BOX_LENGTH - MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0))
+boxTop.add(box.drawField(MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0, -1))
+
+# the screen
+boxTop.add(box._draw_rectangle(SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT, green))
+
+# screws
+boxTop.add(shapes.Group(
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
+	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green)
+))
+
+# the metal part
+boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1))
+
+boxTop.drawOn(box._doc, 20*mm, (BOX_WIDTH + 27) * mm)
+
+################# render the sides parts
+boxSides = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+
+boxSides.add(box._draw_width_by_height_side(0, 0))
+boxSides.add(box._draw_line(MATERIAL_THICKNESS, MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
+boxSides.add(box._draw_line(BOX_LENGTH - MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_LENGTH - MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
+
+g = shapes.Group()
+g.add(box._draw_width_by_height_side(0, 0))
+g.add(box._draw_line(MATERIAL_THICKNESS, MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
+g.add(box._draw_line(BOX_LENGTH - MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_LENGTH - MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
+g.translate(box._notch_length['w']*mm, BOX_INNER_HEIGHT*mm)
+boxSides.add(g)
+
+
+boxSides.drawOn(box._doc, 20*mm , (2*BOX_WIDTH + 27 - MATERIAL_THICKNESS) * mm)
 
 
 

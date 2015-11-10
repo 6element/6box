@@ -45,13 +45,15 @@ class Box():
             self._thickness, -1*self._cut_width/2.0, True, True, color))
         return g
 
-    def _draw_width_by_height_side(self,x0,y0):
-        self._draw_horizontal_line(x0, y0, 
+    def _draw_width_by_height_side(self, x0, y0, color = blue):
+        g = shapes.Group()
+        g.add(self._draw_horizontal_line(x0, y0, 
             self._notch_length['w'], self._num_notches['w'],
-            self._thickness,self._cut_width/2.0, True, True);
-        self._draw_horizontal_line(x0, y0+self._size['h']-self._thickness, 
+            self._thickness,self._cut_width/2.0, True, True, color))
+        g.add(self._draw_horizontal_line(x0, y0+self._size['h']-self._thickness, 
             self._notch_length['w'], self._num_notches['w'],
-            self._thickness,self._cut_width/2.0, False, True);
+            self._thickness,self._cut_width/2.0, False, True, color))
+        return g
 
     def _compute_dimensions(self):
         # first enlarge the box to compensate for cut width
