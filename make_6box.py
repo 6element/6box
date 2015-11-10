@@ -80,32 +80,16 @@ def draw_side(x, y, attach_height, fieldnum, fliph = 1, colorout = green, colori
 	l9 = box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x - insert_length, y + BOX_WIDTH - MATERIAL_THICKNESS, colorout)
 	l10 = box._draw_line(x, y + BOX_WIDTH - MATERIAL_THICKNESS, x, y + BOX_WIDTH, colorout)
 	if fliph == 1:
-		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
-		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + attach_height, RADIUS)
+		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS, colorin)
+		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X), y + attach_height, RADIUS, colorin)
 	else:
-		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS)
-		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*fliph, y + attach_height, RADIUS)
+		p1 = box._draw_circle(x - (SCREEN_X - MATERIAL_THICKNESS +  SCREEN_TO_SCREW1X)*fliph, y + attach_height, RADIUS, colorin)
+		p2 = box._draw_circle(x - (SCREEN_X + MATERIAL_THICKNESS + SCREEN_WIDTH - SCREEN_TO_SCREW2X)*fliph, y + attach_height, RADIUS, colorin)
 	return shapes.Group(f, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, p1, p2, b)
 
 for i in [5 ,4, 3, 2, 1]:
 	boxBottom.add(draw_side(BOX_LENGTH - MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, i))
 	boxBottom.add(draw_side(MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, i, -1))
-
-
-# draw_side(marginxBottom + 285, marginy, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 1)
-# draw_side(marginxBottom  + 230, marginy, SCREEN_Y + SCREEN_TO_SCREW1Y, 1, -1)
-# draw_side(marginxBottom + 417, marginy, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 4)
-# draw_side(marginxBottom  + 365, marginy, SCREEN_Y + SCREEN_TO_SCREW1Y, 4, -1)
-# draw_side(marginxBottom + 375, marginy + BOX_WIDTH, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 2)
-# draw_side(marginxBottom  + 320, marginy + BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, 2, -1)
-# draw_side(marginxBottom + 360, marginy + 2*BOX_WIDTH, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 3)
-# draw_side(marginxBottom  + 300, marginy + 2*BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, 3, -1)
-
-# g1 = draw_side(200, marginy + 2*BOX_WIDTH, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 5)
-# g1.rotate(90)
-
-# draw_side(250, marginy + 2*BOX_WIDTH, SCREEN_Y + SCREEN_TO_SCREW1Y, 5, -1)
-
 
 # screws
 boxBottom.add(shapes.Group(
@@ -140,7 +124,7 @@ boxTop.add(shapes.Group(
 ))
 
 # the metal part
-boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1))
+boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1, red))
 
 boxTop.drawOn(box._doc, 20*mm, (BOX_WIDTH + 27) * mm)
 
@@ -157,10 +141,57 @@ g.add(box._draw_line(MATERIAL_THICKNESS, MATERIAL_THICKNESS, MATERIAL_THICKNESS,
 g.add(box._draw_line(BOX_LENGTH - MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_LENGTH - MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
 g.translate(box._notch_length['w']*mm, BOX_INNER_HEIGHT*mm)
 boxSides.add(g)
-
+c = box._draw_circle(MATERIAL_THICKNESS + 50.5*mm, MATERIAL_THICKNESS + 2*BOX_INNER_HEIGHT - MATERIAL_THICKNESS, 5, red)
+boxSides.add(c)
 
 boxSides.drawOn(box._doc, 20*mm , (2*BOX_WIDTH + 27 - MATERIAL_THICKNESS) * mm)
 
+################# the sides
+d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+d.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 1, -1, blue, red))
+d.add(draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 1, 1, blue, red))
+d.drawOn(box._doc, (BOX_LENGTH + 155)*mm ,  0* mm)
+
+d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+d.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 2, -1, blue, red))
+d.add(draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 2, 1, blue, red))
+d.drawOn(box._doc, (BOX_LENGTH + 75)*mm ,  (BOX_WIDTH + 30)* mm)
+
+d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+g = shapes.Group()
+s = draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 3, -1, blue, red)
+s.rotate(90)
+g.add(s)
+s = draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 3, 1, blue, red)
+s.rotate(90)
+s.translate(-40*mm, -50*mm)
+g.add(s)
+d.add(g)
+d.drawOn(box._doc, (BOX_WIDTH + 20)*mm ,  3*BOX_WIDTH* mm)
+
+d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+g = shapes.Group()
+s = draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), 4, -1, blue, red)
+s.rotate(90)
+g.add(s)
+s = draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 4, 1, blue, red)
+# s.rotate(90)
+s.translate(-50*mm, -100*mm)
+g.add(s)
+d.add(g)
+d.drawOn(box._doc, (BOX_WIDTH + 210)*mm ,  3*BOX_WIDTH* mm)
+
+d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+g = shapes.Group()
+s = draw_side(0, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 5, 1, blue, red)
+s.rotate(15)
+g.add(s)
+s.translate(90*mm, 140*mm)
+s = draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, 5, 1, blue, red)
+s.rotate(15)
+g.add(s)
+d.add(g)
+d.drawOn(box._doc, (BOX_WIDTH + 260)*mm ,  (BOX_WIDTH - 7)* mm)
 
 
 box._doc.save()
