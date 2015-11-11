@@ -10,15 +10,15 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.graphics import shapes
 from reportlab.lib.units import mm
 
-PLATE_LENGTH = 1000
-PLATE_WIDTH = 500
+PLATE_LENGTH = 1220
+PLATE_WIDTH = 480
 MATERIAL_THICKNESS = 5
 
 BOX_LENGTH = 245
 BOX_WIDTH = 140
-BOX_INNER_HEIGHT = 5 * MATERIAL_THICKNESS 
+BOX_INNER_HEIGHT = 5 * MATERIAL_THICKNESS - 0.1*mm
 
-CUT_WIDTH = 0.01
+CUT_WIDTH = 0.001
 
 SCREEN_X = 8
 SCREEN_Y = 15
@@ -85,9 +85,9 @@ def draw_side(x, y, attach_height, hole_dist_x, fieldnum, fliph = 1, colorout = 
 		# p = box._draw_circle(x - (SCREEN_X + SCREEN_TO_SCREW1X - MATERIAL_THICKNESS)*fliph, y + attach_height, RADIUS, colorin)
 	return shapes.Group(f, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, p, b)
 
-for i in [4, 3, 2, 1]:
-	boxBottom.add(draw_side(BOX_LENGTH - MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, i))
-	boxBottom.add(draw_side(MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, i, -1))
+# for i in [4, 3, 2, 1]:
+# 	boxBottom.add(draw_side(BOX_LENGTH - MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, i))
+# 	boxBottom.add(draw_side(MATERIAL_THICKNESS, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, i, -1))
 
 # screws
 boxBottom.add(shapes.Group(
@@ -98,7 +98,7 @@ boxBottom.add(shapes.Group(
 ))
 
 
-boxBottom.drawOn(box._doc, 65*mm, 15*mm)
+boxBottom.drawOn(box._doc, 58*mm, 10*mm)
 
 
 ################# render the top part
@@ -110,21 +110,24 @@ boxTop.add(box._draw_width_by_depth_side(0, 0))
 boxTop.add(box.drawField(BOX_LENGTH - MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0))
 boxTop.add(box.drawField(MATERIAL_THICKNESS, 0, BOX_WIDTH/2, 0, -1))
 
-# the screen
-boxTop.add(box._draw_rectangle(SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT, green))
+# # the screen
+# boxTop.add(box._draw_rectangle(SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT, green))
 
-# screws
-boxTop.add(shapes.Group(
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
-	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green)
-))
+# # screws
+# boxTop.add(shapes.Group(
+# 	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
+# 	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW1X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green),
+# 	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW1Y, RADIUS, green),
+# 	box._draw_circle(SCREEN_X + SCREEN_TO_SCREW2X, SCREEN_Y + SCREEN_TO_SCREW2Y, RADIUS, green)
+# ))
+
+# hole for the led
+boxTop.add(box._draw_circle(SCREEN_X + SCREEN_WIDTH + 25, SCREEN_Y + 55, 0.3, red))
 
 # the metal part
 boxTop.add(box._draw_rectangle(SCREEN_X + SCREEN_TO_METALX1, SCREEN_Y + SCREEN_TO_METALY1, SCREEN_TO_METALX2 - SCREEN_TO_METALX1, SCREEN_TO_METALY2 - SCREEN_TO_METALY1, red))
 
-boxTop.drawOn(box._doc, 20*mm, (BOX_WIDTH + 27) * mm)
+boxTop.drawOn(box._doc, 20*mm, (BOX_WIDTH + 18) * mm)
 
 ################# render the sides parts
 boxSides = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
@@ -139,20 +142,36 @@ g.add(box._draw_line(MATERIAL_THICKNESS, MATERIAL_THICKNESS, MATERIAL_THICKNESS,
 g.add(box._draw_line(BOX_LENGTH - MATERIAL_THICKNESS, MATERIAL_THICKNESS, BOX_LENGTH - MATERIAL_THICKNESS, BOX_INNER_HEIGHT))
 g.translate(box._notch_length['w']*mm, BOX_INNER_HEIGHT*mm)
 boxSides.add(g)
-c = box._draw_circle(MATERIAL_THICKNESS + 50.5*mm, MATERIAL_THICKNESS + 2*BOX_INNER_HEIGHT - MATERIAL_THICKNESS, 5, red)
+c = box._draw_circle(MATERIAL_THICKNESS + 50.5*mm, MATERIAL_THICKNESS + BOX_INNER_HEIGHT, 4, red)
 boxSides.add(c)
 
-boxSides.drawOn(box._doc, 20*mm , (2*BOX_WIDTH + 27 - MATERIAL_THICKNESS) * mm)
+boxSides.drawOn(box._doc, 20*mm , (2*BOX_WIDTH + 18 - MATERIAL_THICKNESS) * mm)
 
 ################# the sides
 d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
-d.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, 1, -1, blue, red))
-d.add(draw_side(51, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, 1, 1, blue, red))
+g1 = shapes.Group()
+g1.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, 1, 1, blue, red))
+g1.rotate(9)
+g1.translate(-17*mm, 67*mm)
+d.add(g1)
+g2 = shapes.Group()
+g2.add(draw_side(51, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, 1, 1, red, red))
+g2.rotate(90)
+g2.translate(180*mm, 200*mm)
+d.add(g2)
 d.drawOn(box._doc, (BOX_LENGTH + 155)*mm ,  5* mm)
 
 d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
-d.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, 2, -1, blue, red))
-d.add(draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, 2, 1, blue, red))
+g1 = shapes.Group()
+g1.add(draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), BOX_LENGTH - SCREEN_X - SCREEN_TO_SCREW2X - MATERIAL_THICKNESS, 2, -1, blue, red))
+g1.rotate(20)
+g1.translate(32*mm, 38*mm)
+d.add(g1)
+g2 = shapes.Group()
+g2.add(draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, 2, 1, blue, red))
+g2.rotate(20)
+g2.translate(10*mm, -6*mm)
+d.add(g2)
 d.drawOn(box._doc, (BOX_LENGTH + 75)*mm ,  (BOX_WIDTH + 30)* mm)
 
 d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
@@ -165,7 +184,7 @@ s.rotate(90)
 s.translate(-40*mm, -50*mm)
 g.add(s)
 d.add(g)
-d.drawOn(box._doc, (BOX_WIDTH + 20)*mm ,  3*BOX_WIDTH* mm)
+d.drawOn(box._doc, (BOX_WIDTH + 5)*mm ,  (3*BOX_WIDTH - 23)* mm)
 
 d = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
 g = shapes.Group()
@@ -173,12 +192,15 @@ s = draw_side(0, 0, BOX_WIDTH - (SCREEN_Y + SCREEN_TO_SCREW1Y), BOX_LENGTH - SCR
 s.rotate(90)
 g.add(s)
 s = draw_side(55, 0, SCREEN_Y + SCREEN_TO_SCREW1Y, SCREEN_TO_SCREW1X - MATERIAL_THICKNESS + SCREEN_X, 4, 1, blue, red)
-# s.rotate(90)
-s.translate(-50*mm, -100*mm)
+s.rotate(90)
+s.translate(-40*mm, -50*mm)
 g.add(s)
 d.add(g)
-d.drawOn(box._doc, (BOX_WIDTH + 210)*mm ,  3*BOX_WIDTH* mm)
+d.drawOn(box._doc, (BOX_WIDTH + 200)*mm ,  (3*BOX_WIDTH - 18)* mm)
 
+bounds = shapes.Drawing(PLATE_LENGTH, PLATE_WIDTH)
+bounds.add(box._draw_rectangle(1, 1, 400, 478))
+bounds.drawOn(box._doc, 0,  0)
 
 
 box._doc.save()
