@@ -86,11 +86,12 @@ class Box():
         self._bounding_box_size = { 'w': self._box_pieces_size['w']+self._margin*2,
                                     'h': self._box_pieces_size['h']+self._margin*3 }
 
-    def _initialize_document(self, filename, width, height):
+    def _initialize_document(self, filename, width, height, strokeWidth):
         # initialize the pdf file (based on layout of pieces)
         self._doc = canvas.Canvas(filename, width, height)
         self._doc.setPageSize( [width*mm, height*mm] )
-        self._doc.setLineWidth(0.1)
+        self._doc.setLineWidth(strokeWidth)
+        self.strokeWidth = strokeWidth
 
     def _draw_horizontal_line(self, x0,y0,notch_width,notch_count,notch_height,cut_width,flip,smallside, color):
         x = x0
@@ -100,22 +101,35 @@ class Box():
             y = y0 if (((step%2)==0)^flip) else y0+notch_height
             if step==0: # start first edge in the right place
                 if smallside:
-                    g.add(self._draw_line(x+notch_height,y,x+notch_width+cut_width,y, color))
+                    l = self._draw_line(x+notch_height,y,x+notch_width+cut_width,y, color)
+                    l.strokeWidth = self.strokeWidth
+                    g.add(l)
                 else:
-                    g.add(self._draw_line(x,y,x+notch_width+cut_width,y, color))
+                    l = self._draw_line(x,y,x+notch_width+cut_width,y, color)
+                    l.strokeWidth = self.strokeWidth
+                    g.add(l)
             elif step==(notch_count-1): # shorter last edge
-                g.add(self._draw_line(x-cut_width,y,x+notch_width-notch_height,y, color))
+                l = self._draw_line(x-cut_width,y,x+notch_width-notch_height,y, color)
+                l.strokeWidth = self.strokeWidth
+                g.add(l)
             elif step%2==0:
-                g.add(self._draw_line(x-cut_width,y,x+notch_width+cut_width,y, color))
+                l = self._draw_line(x-cut_width,y,x+notch_width+cut_width,y, color)
+                l.strokeWidth = self.strokeWidth
+                g.add(l)
             else:
-                g.add(self._draw_line(x+cut_width,y,x+notch_width-cut_width,y, color))
+                l = self._draw_line(x+cut_width,y,x+notch_width-cut_width,y, color)
+                l.strokeWidth = self.strokeWidth
+                g.add(l)
             if step<(notch_count-1):
                 if step%2==0:
-                    g.add(self._draw_line(x+notch_width+cut_width,y0+notch_height,x+notch_width+cut_width,y0, color))
+                    l = self._draw_line(x+notch_width+cut_width,y0+notch_height,x+notch_width+cut_width,y0, color)
+                    l.strokeWidth = self.strokeWidth
+                    g.add(l)
                 else:
-                    g.add(self._draw_line(x+notch_width-cut_width,y0+notch_height,x+notch_width-cut_width,y0, color))
+                    l = self._draw_line(x+notch_width-cut_width,y0+notch_height,x+notch_width-cut_width,y0, color)
+                    l.strokeWidth = self.strokeWidth
+                    g.add(l)
             x = x + notch_width
-
         return g
 
     def drawField(self, X, Y, width, lineNum, flip = 1, color = blue):
@@ -141,31 +155,34 @@ class Box():
             coords += [x*mm, y*mm]
         p = shapes.PolyLine(coords)
         p.strokeColor = color
+        p.strokeWidth = self.strokeWidth
         return p
 
     def _draw_polyline(self, coords, color = blue):
         mmcoords = map(lambda x: x*mm, coords)
         p = shapes.PolyLine(mmcoords)
         p.strokeColor = color
+        p.strokeWidth = self.strokeWidth
         return p
 
     def _draw_line(self, fromX, fromY, toX, toY, color = blue):
         l = shapes.Line(fromX*mm,fromY*mm,toX*mm,toY*mm)
         l.strokeColor = color
+        l.strokeWidth = self.strokeWidth
         return l
 
     def _draw_circle(self, X, Y, radius, color=blue):
         c = shapes.Circle(X*mm, Y*mm, radius*mm)
         c.fillColor = None
         c.strokeColor = color
-        c.strokeWidth = 1
+        c.strokeWidth = self.strokeWidth
         return c
 
     def _draw_rectangle(self, X, Y, w, h, color = blue):
         r = shapes.Rect(X*mm, Y*mm, w*mm, h*mm)
         r.fillColor = None
         r.strokeColor = color
-        r.strokeWidth = 1
+        r.strokeWidth = self.strokeWidth
         return r
 
     def _draw_bezier(self, x1, y1, x2, y2, x3, y3, x4, y4):

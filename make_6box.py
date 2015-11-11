@@ -43,7 +43,7 @@ marginy = 10
 ##### preparation (box and field)
 box = Boxmaker.Box(BOX_LENGTH, BOX_INNER_HEIGHT + MATERIAL_THICKNESS, BOX_WIDTH, MATERIAL_THICKNESS, CUT_WIDTH, 2.5*MATERIAL_THICKNESS)
 box._compute_dimensions()
-box._initialize_document("6box_wood.pdf", PLATE_LENGTH, PLATE_WIDTH)
+box._initialize_document("6box_wood.pdf", PLATE_LENGTH, PLATE_WIDTH, 0.001)
 
 
 # ################## render the bottom part
