@@ -5,8 +5,6 @@ from reportlab.lib.colors import black
 from reportlab.lib.colors import red
 from reportlab.lib.colors import blue
 from reportlab.lib.colors import green
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
 from reportlab.graphics import shapes
 from reportlab.lib.units import mm
 
